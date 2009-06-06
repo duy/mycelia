@@ -1,0 +1,67 @@
+{% extends "wiki/base.html" %}
+
+{% load timezone_filters %}
+{% load i18n %}
+{% load wiki %}
+{% load wikiurl %}
+
+{% block head_title %}{{ article.title }} {% endblock %}
+
+{% block body %}
+<div class="left_panel">
+    {% wiki_title group %}
+
+    <h2>{% trans "History for article" %} <a href="{% wikiurl article group article %}"> {{ article.title }} </a></h2>
+
+    {% if changes %}
+                <div class="items row_heading">
+                    <div class="col_published"><h3>{% trans "Date" %}</h3></div>
+                    <div class="col_status"><h3>{% trans "Editor" %}</h3></div>
+                    <div class="col_comment"><h3>{% trans "Comment" %}</h3></div>
+                    <div class="col_version"><h3>{% trans "Revert to..." %}</h3></div>
+                </tr>
+                {% for change in changes %}
+                <div class="items">
+                        <div class="col_published">
+                            <a href="{% wikiurl changeset group article change.revision %}">
+                            {#{{ change.modified|localtime:account.timezone|date:_("DATETIME_FORMAT") }}</a>#}
+                            {{ change.modified|date}}</a>
+                        </div>
+                        <div class="col_status">
+                            {% if change.is_anonymous_change %}
+                                {{ change.editor_ip }}
+                            {% else %}
+                                <a href="{% url profile_detail change.editor.username %}">{{ change.editor }}</a>
+                            {% endif %}
+                        </div>
+                        <div class="col_comment">
+                            {% if change.comment %}<i>'{{ change.comment}}'</i> {% else %}&nbsp;{% endif %}
+                        </div>
+                        <div class="col_version">
+                            {% if forloop.first %}
+                                {% trans "Current Revision" %}
+                            {% else %}
+                            <form method="post" action="{% wikiurl revert_to_revision group article %}">
+                                {% comment %}
+                                <input name="revision" type="radio"
+                                    {% if not allow_write %}disabled="disabled"{% endif %}
+                                       value="{{ change.revision }}">
+                                <input type="submit" value="{% trans "Revert" %}"
+                                {% endcomment %}
+                                {% if allow_write %}
+                                <div class="actions">
+                                <input type="submit" value="{% trans "Revert" %}"> <img src="{{ MEDIA_URL }}pinax/images/silk/icons/arrow_redo.png" title="{% trans "Revert" %}" alt="{% trans "Revert" %}"/></input>
+                                {% else %}&nbsp;
+                                {% endif %}
+                                </div>
+                                <input type="hidden" name="action" value="{{ change.revision }}"/>
+                            </form>
+                            {% endif %}
+                        </div>
+                </div>
+             {% endfor %}
+    {% else %}
+        <p>{% trans "No changes in this article" %}</p>
+    {% endif %}
+</div>
+{% endblock %}

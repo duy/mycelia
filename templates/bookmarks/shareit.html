@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load avatar_tags %}
+{% load voting_tags %}
+{% load pagination_tags %}
+{% load extra_voting_tags %}
+{% load in_filter %}
+{% load extra_tagging_tags %}
+{% load tagging_tags %}
+{% tags_for_object bookmark as tags %}
+
+                        <div class="shareit">
+                            <a href="http://technorati.com/cosmos/search.html?url={{ bookmark.url }}" class="spread_link"><img src="{{ MEDIA_URL }}mycelia/images/shareit/technorati.png" alt="Find related stories via Technorati" title="Find related stories via Technorati" /></a>
+                            <a href="http://del.icio.us/post?url={{ bookmark.url }}&amp;title={{ bookmark.description }}" class="spread_link"><img src="{{ MEDIA_URL }}mycelia/images/shareit/delicious.png" alt="Post to del.icio.us" title="Post to del.icio.us" /></a>
+                            <a href="http://www.digg.com/submit?url={{ bookmark.url }}&amp;phase=2" class="spread_link"><img src="{{ MEDIA_URL }}mycelia/images/shareit/digg.png" alt="submit digg.com" title="submit digg.com" /></a>
+                            <a href="http://reddit.com/submit?url={{ bookmark.url }}&amp;title={{ bookmark.description }}" class="spread_link"><img src="{{ MEDIA_URL }}mycelia/images/shareit/reddit.png" alt="post reddit" title="post reddit" /></a>
+                            <a href="http://www.facebook.com/share.php?u={{ bookmark.url }}&amp;t={{ bookmark.description }}" title="Facebook"><img src="{{ MEDIA_URL }}mycelia/images/shareit/facebook.png" title="Facebook" alt="Facebook" /></a>
+                            <a href="http://www.google.com/bookmarks/mark?op=edit&amp;bkmk={{ bookmark.url }}&amp;title={{ bookmark.description }}" title="Google"><img src="{{ MEDIA_URL }}mycelia/images/shareit/googlebookmark.png" title="Google" alt="Google" /></a>
+
+                            <a href="http://barrapunto.com/submit.pl?subj={{ bookmark.description }}&amp;story={{ bookmark.url }}" title="BarraPunto"><img src="{{ MEDIA_URL }}mycelia/images/shareit/barrapunto.png" title="BarraPunto" alt="BarraPunto" /></a>
+                            <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{ bookmark.url }}&amp;title={{ bookmark.description }}&amp;source={% for tag in tags %}{{ tag }}+{% endfor %}&amp;summary={{ bookmark.description }}" title="LinkedIn"><img src="{{ MEDIA_URL }}mycelia/images/shareit/linkedin.png" title="LinkedIn" alt="LinkedIn" /></a>
+                            <a href="http://meneame.net/submit.php?url={{ bookmark.url }}" title="Meneame"><img src="{{ MEDIA_URL }}mycelia/images/shareit/meneame.png" title="Meneame" alt="Meneame" /></a>
+                            <a href="http://twitter.com/home?status={{ bookmark.url }}" title="TwitThis"><img src="{{ MEDIA_URL }}mycelia/images/shareit/twitter.gif" title="TwitThis" alt="TwitThis" /></a>
+                            <a href="mailto:?subject={{ bookmark.description }}&amp;body={{ bookmark.url }}" title="E-mail this story to a friend!"><img src="{{ MEDIA_URL }}pinax/images/silk/icons/email_link.png" onclick="" title="E-mail this story to a friend!" alt="E-mail this story to a friend!" /></a>
+                            {% comment %}
+                            http://www.blinklist.com/
+                            furl
+                            newsvine
+                            stumbleupon
+                            windows live 
+                            tailrank 
+                            bloglines 
+                            slashdot
+                            {% endcomment %}
+                        </div>

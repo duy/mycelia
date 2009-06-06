@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load extra_tagging_tags %}
+
+{%comment%}
+<dt>{{ project.name }} (<a href="{{ project.get_absolute_url }}">{{ project.slug }}</a>)</dt>
+<dd>
+    {{ project.description }}
+    <div class="project_stats">
+        {% trans "Members:" %} <b>{{ project.members.count }}</b>
+        {% trans "Tasks:" %} <b>{{ project.tasks.count }}</b>
+        {% trans "Topics:" %} <b>{{ project.topics.count }}</b>
+        {% trans "Wiki Pages:" %} <b>{{ project.wiki_articles.count }}</b>
+        <br />
+        <p>{% show_tags_for project %}</p>
+    </div>
+</dd>
+{%endcomment%}
+<div class="items">
+    <div class="col_meta">
+        <div class="details">
+            <div>{% trans "Members:" %} <b>{{ project.members.count }}</b></div>
+            <div>{% trans "Tasks:" %} <b>{{ project.tasks.count }}</b></div>
+            <div>{% trans "Topics:" %} <b>{{ project.topics.count }}</b></div>
+            <div>{% trans "Wiki Pages:" %} <b>{{ project.wiki_articles.count }}</b></div>
+            </div>
+    </div>
+    <div class="col_tease">
+         <h2><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></h2>
+        {{ project.description }}
+        {# FIXME: this do not work #}
+        <div class="tags">{% show_tags_for project %}</div>
+    </div>
+</div>
+    <div class="clear_both"></div>

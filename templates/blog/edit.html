@@ -1,0 +1,72 @@
+{% extends "blog/base.html" %}
+
+{% load i18n %}
+{% load wiki %}
+{% load markup %}
+{% load switchcase %}
+{% load tagging_tags %}
+{% load restructuredtext %}
+{% load uni_form %}
+{% load blog %}
+
+{% block head_title %}{% blocktrans %}Editing Post{% endblocktrans %}{% endblock %}
+
+{% block body %}
+<div class="left_panel">
+   <div class="form-toggle">
+                <p><span id="edit-profile-toggle"><img src="{{ MEDIA_URL }}pinax/images/silk/icons/pencil.png" border="0" title="{% trans "Edit Profile" %}" />{% trans "Edit Post" %}</span></p>
+                
+        {% ifequal post.author request.user %}
+            {% url blog_edit post.id as the_url %}
+            {% comment %}
+                <form class="uniForm" id="edit-profile" method="POST" action="" {% ifnotequal the_url request.path_info %}style="display: none;"> hola {%else %} > adios {% endifnotequal %}
+            {% endcomment %}
+                <form class="uniForm" id="edit-profile" method="POST" action="">
+                    <fieldset class="inlineLabels">  
+                        {{ blog_form|as_uni_form }}
+                        <div class="form_block">
+                        <input type="hidden" name="action" value="update" />
+                        <input type="submit" value="{% trans "update" %}" class="button/>
+                        </div>
+                    </fieldset>
+                </form>
+        {% else %}
+            <p>You are not the author of this post.</p>
+        {% endifequal %}
+    </div>
+</div>
+{% endblock %}
+{% block extra_body %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var the_url = "{% url blog_edit post.id %}";
+            var path_info = "{{request.path_info}}";
+            if (the_url !== path_info) {
+                $('#edit-profile').hide();
+            }
+                
+                $('#edit-profile-toggle').click(function() {
+                    $('#edit-profile').toggle();
+                    $('#edit-profile').autoscroll();
+                    return false;
+                });
+                if ($('#edit-profile ul.errorlist').length) {
+                    $('#edit-profile').show();
+                    $('#edit-profile ul.errorlist').autoscroll();
+                }
+        });
+    </script>
+    {# as prepopulate_from has been deleted from Fields, this code do the same function #}
+    <script type="text/javascript" src="{% load adminmedia %}{% admin_media_prefix %}js/urlify.js"></script>
+    <script type="text/javascript">
+        document.getElementById("id_title").onchange = function() { 
+            this._changed = true;
+        };
+        document.getElementById("id_title").onkeyup = function() {
+            var e = document.getElementById("id_slug");
+            if (!e._changed) { 
+                e.value = URLify(document.getElementById("id_title").value, document.getElementById("id_title").value.length);
+            }
+        }
+</script>
+{% endblock %}

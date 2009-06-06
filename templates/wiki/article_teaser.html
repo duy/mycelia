@@ -1,0 +1,21 @@
+
+{% load wiki %}
+{% load avatar_tags %}
+{% load extra_tagging_tags %}
+
+<div class="items {% cycle odd,even %}">
+    <div class="col_meta details">
+        <div class="avatar">{% avatar article.latest_changeset.editor 40 %}</div>
+        <div class="author">
+            <a href="{% url profile_detail article.latest_changeset.editor.username %}">
+                {{ article.latest_changeset.editor }}
+            </a>
+        </div>
+        <div class="date">{{ article.last_update|date }}</div>
+    </div>
+    <div class="bulk">
+        <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
+        <div class="body">{% render_content article 'summary' %}</div>
+        <div class="tags">{% show_tags_for article %}</div>
+    </div>
+</div>

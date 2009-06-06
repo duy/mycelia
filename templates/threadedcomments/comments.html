@@ -1,0 +1,76 @@
+{% load threadedcommentstags %}
+{% load i18n %}
+{% load uni_form %}
+{% load pagination_tags %}
+{% load avatar_tags %}
+
+{% get_threaded_comment_tree for object as responses %}
+{% autopaginate responses %}
+
+
+    {% for response in responses %}
+        <div class="items {% cycle even,odd %} thread-{{ response.depth }} clearfix">
+            <div class="col_meta">
+            <div class="details">
+                <div class="avatar">{% avatar response.user 40 %}</div>
+                <div class="author"><a href="{% url profile_detail response.user.username %}">{{ response.user     }}</a></div>
+                <div class="date">{{ response.date_submitted|date }}</div>
+                {#<p><span id="edit-profile-toggle"><img src="{{ MEDIA_URL }}pinax/images/silk/icons/comment_add.png" title="{% trans "Reply to This Post" %}" />{% trans "Reply to This Post" %}</span></p>#}
+            </div>
+            </div>
+            <div class="col_tease">
+                {% ifequal user response.user %}
+                <div class="actions">   
+                    <form method="POST" action="{% url tc_comment_delete response.id %}">
+                        <img class="noborder" src="{{ MEDIA_URL }}pinax/images/silk/icons/comment_delete.png" /><input type="submit" value="{% trans "Delete Post" %}"> </input>
+                        <input type="hidden" name="next" value="{{ request.path }}" />
+                    </form>
+                    <a href="javascript:toggle_comment_form({{ response.id }})"><img class="noborder" src="{{ MEDIA_URL }}pinax/images/silk/icons/comment_add.png" title="{% trans "Reply to This Post" %}" />{% trans "Reply to This Comment" %}</a>
+                </div>
+                {% endifequal %}
+                <div class="body">{{ response.comment|urlize|linebreaks }}</div>
+            </div> 
+            <div class="clear_both"></div>
+            <div class="form-toggle">
+                <form class="hidden uniForm" method="POST" action="{% get_comment_url object response %}" id="comment_form_{{ response.id }}">
+                   <fieldset class="inlineLabels">
+                       <div class="ctrlHolder">
+                            <label>{% trans "Replying to the comment" %}</label>
+                           <textarea id="id_comment" rows="10" cols="40" name="comment"></textarea>
+                       </div>
+                        <div class="form_block">
+                            <input type="submit" value="{% trans "Post Response" %}" />
+                            <input type="hidden" name="next" value="{{ request.path }}" />
+                        </div>
+                   </fieldset>
+                </form>
+            </div
+        </div>
+    {% endfor %}
+
+{% paginate %}
+
+{% if user.is_authenticated %}
+            <div class="clear_both"></div>
+<div class="form-toggle">
+{#<div class="form_comment">#}
+    <form class="uniForm" method="POST" action="{% get_comment_url object %}">
+        <fieldset class="inlineLabels">
+            <div class="ctrlHolder">
+                <label>{% trans "Reply to the Post" %}</label>
+                <textarea id="id_comment" rows="10" cols="40" name="comment"></textarea>
+            </div>
+            <div class="form_block">
+                <input type="hidden" name="next" value="{{ request.path }}" />
+                <input type="submit" value="{% trans "Post Response" %}" />
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% else %}
+    <h3>Please <a href="{% url acct_login %}">Login</a> (or <a href="{% url acct_signup %}">Sign Up</a>) to leave a comment</h3>
+{% endif %}
+
+{% block extra_body %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}comments.js"></script>
+{% endblock %}

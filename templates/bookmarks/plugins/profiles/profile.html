@@ -1,0 +1,51 @@
+{% load i18n %}
+{% load extra_tagging_tags %}
+<div class="bookmarks_plugin"
+<h2>{% trans "Bookmarks" %}</h2>
+
+{% if owner.saved_bookmarks.all %}
+{% comment %}
+    <table class="bookmarks narrow">
+        {% for bookmark_instance in owner.saved_bookmarks.all.select_related %}
+            <tr class="{% cycle odd,even %}">
+                <td class="meta">
+                    {{ bookmark_instance.saved|date }}
+                    {# add who originally added it and when #}
+                </td>
+                <td>
+                    <h2><a href="{{ bookmark_instance.bookmark.url }}">{{ bookmark_instance.description }}</a></h2>
+                    <div class="url">{% if bookmark_instance.bookmark.get_favicon_url %}<img src="{{ bookmark_instance.bookmark.get_favicon_url }}" height="16" width="16"/> {% endif %}{{ bookmark_instance.bookmark.url }}</div>
+                    <div class="body">{{ bookmark_instance.note|linebreaks }}</div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endcomment %}
+
+        {% comment %}
+        {% for bookmark_instance in owner.saved_bookmarks.all.select_related %}
+            <div class="bookmarks {% cycle odd,even %}">
+                <div class="meta">
+                    <div class="date"{{ bookmark_instance.saved|date }}</div>
+                    {# add who originally added it and when #}
+                    <div class="tags"><p>{% show_tags_for bookmark_instance %}{#{% show_tag_counts bookmark_instance.all_tags_with_counts %}#}</p></div>
+                </div>
+                <div class="bulk">
+                    <h2><a href="{{ bookmark_instance.bookmark.url }}">{{ bookmark_instance.description }}</a></h2>
+                    <div class="url">{% if bookmark_instance.bookmark.get_favicon_url %}<img src="{{ bookmark_instance.bookmark.get_favicon_url }}" height="16" width="16"/> {% endif %}{{ bookmark_instance.bookmark.url }}</div>
+                    <div class="body">{{ bookmark_instance.note|linebreaks }}</div>
+                </div>
+            </div>
+        {% endfor %}
+        {% endcomment %}
+            {% for bookmark_instance in owner.saved_bookmarks.all.select_related %}
+            {% with bookmark_instance.bookmark as bookmark %}
+                {# This should be done with inclusion tags#}
+                {% include "bookmarks/bookmark_item.html"%}
+            {% endwith %}
+            {% endfor %}
+    </div>
+{% else %}
+    {% url add_bookmark as add_bookmark_url %}
+    <p>{% blocktrans %}You haven't added any <a href="{{ add_bookmark_url }}">bookmarks</a> yet.{% endblocktrans %}</p>
+{% endif %}

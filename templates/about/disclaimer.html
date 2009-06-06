@@ -1,0 +1,15 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Privacy Policy" %}{% endblock %}
+
+{% block body %}
+    {% trans "
+
+1. El material creado por {{ site_url }} estará bajo las condiciones de la licencia GNU Free Documentation License. El resto estará bajo las condiciones que sus respectivos autores le impusieran.
+
+2. {{ site_url }}, no se hace responsable en ningún caso de los comentarios vertidos por nuestros usuarios. Estos son responsabilidad de los mismos/as.
+
+3. {{ site_url }}, no asume ningún tipo de responsabilidad con el material enlazado en estas páginas ya sean artículos, imágenes o audio.
+%}

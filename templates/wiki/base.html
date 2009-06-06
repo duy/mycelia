@@ -1,0 +1,21 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load wikiurl %}
+
+{% block rtab_id %}id="wiki_tab"{% endblock %}
+
+{% block subnav %}
+    {% if user.is_authenticated %}
+        <div id="subnav_heading">{% trans "Wiki" %}</div>
+    <ul>
+        <li><a href="{% wikiurl list group %} ">{% trans "All Articles" %}</a></li>
+        <li><a href="">{% trans "Your observed articles (not yet implemented)" %}</a></li>
+        <li><a href="">{% trans "Your observed articles (not yet implemented)" %}</a></li>
+        {% if allow_write %}
+        <li><a href="{% wikiurl edit group new_article %}">{% trans "Start a New Article"%}</a></li>
+        {% endif %}
+    </ul>
+    {% else %}
+    {% endif %}
+{% endblock %}

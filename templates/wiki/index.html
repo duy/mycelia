@@ -1,0 +1,48 @@
+{% extends "wiki/base.html" %}
+
+{% load i18n %}
+{% load wiki %}
+{% load wikiurl %}
+{% load pagination_tags %}
+{% load humanize %}
+
+{% block head_title %}Wiki for {{ group.name }}{% endblock %}
+
+{% block body %}
+<div class="left_panel">
+    {% wiki_title group %}
+    
+    {% include "wiki/searchbox.html" %}
+
+    <h2>{% trans "Articles List" %}</h2>
+    
+    {% autopaginate articles %}
+
+    {% regroup articles by created_at.date as articles_by_creation_date %}
+
+    {% if articles %}
+        {% for date in articles_by_creation_date %}
+            {#{{ date.grouper|naturalday:_("MONTH_DAY_FORMAT")|capfirst as modified}}#}
+            {% for article in date.list %}
+            <div class="items">
+                <div class="col_published">
+                    {#<h2 class="join_date"></h2>#}
+                    {{ date.grouper|naturalday:_("MONTH_DAY_FORMAT")|capfirst}}
+                </div>
+                <div class="title">
+                <h2><a href="{% wikiurl article group article %}">{{ article.title }}</a></h2>
+                </div> 
+            </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+    {% if allow_write %}
+        <p>Start a <a href="{% wikiurl edit group new_article %}">NewArticle</a>.</p>
+    {% endif %}
+    
+    {% if not is_member %}
+    <h3>Please <a href="{% url acct_login %}">Login</a> (or <a href="{% url acct_signup %}">Sign Up</a>) to create a new Wiki page </h3>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "wiki/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load wiki %}
+{% load wikiurl %}
+
+{% block head_title %}Wiki for {{ group.name }} {% endblock %}
+
+{% block body %}
+    <div class="left_panel">
+    {% wiki_title group %}
+
+   <div class="form-toggle">
+     <p><span id="edit-profile-toggle"><img src="{{ MEDIA_URL }}pinax/images/silk/icons/pencil.png" border="0" title="{% trans "Edit Article" %}" />{% trans "Edit Article" %}</span></p>
+    {#<h2>{% trans "Edit Article" %} {{ article.title }}</h2>#}
+    
+    <form method="POST" action="" class="uniForm" id="edit-profile">
+        <fieldset class="inlineLabels">
+            {{ form|as_uni_form }}
+            <div class="form_block">
+                <input type="submit" value="{% trans "Save Article" %}"/>
+            </div>
+        </fieldset>
+    </form>
+    </div>
+    </div>
+    
+{% endblock %}
+{% block extra_body %}
+{% comment %}
+TemplateSyntaxError at /projects/project/rhizomatik/wiki/edit/NewArticle/
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var the_url = "{% wikiurl edit group article %}";
+            var path_info = "{{request.path_info}}";
+            if (the_url !== path_info) {
+                $('#edit-profile').hide();
+            }
+                
+                $('#edit-profile-toggle').click(function() {
+                    $('#edit-profile').toggle();
+                    $('#edit-profile').autoscroll();
+                    return false;
+                });
+                if ($('#edit-profile ul.errorlist').length) {
+                    $('#edit-profile').show();
+                    $('#edit-profile ul.errorlist').autoscroll();
+                }
+        });
+    </script>
+{% endcomment %}
+{% endblock %}

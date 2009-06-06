@@ -1,0 +1,52 @@
+{% load i18n %}
+{% load avatar_tags %}
+{% load voting_tags %}
+{% load pagination_tags %}
+{% load extra_voting_tags %}
+{% load in_filter %}
+{% load extra_tagging_tags %}
+
+            <div class="items {% cycle odd,even %}">
+                <div class="col_meta">
+                    <div class="details">
+                        <div class="avatar">{% avatar bookmark.adder 40 %}</div>
+                        <div class="author"><a href="{% url profile_detail bookmark.adder.username %}">{{ bookmark.adder }}</a></div>
+                        <div class="date">{{ bookmark.added|date }}</div>
+                    </div>
+                </div>
+                <div class="col_vote">
+                    <div class="vote">
+                        {% dict_entry_for_item bookmark from vote_dict as vote %}
+                        {% dict_entry_for_item bookmark from score_dict as score %}
+                        {% if user.is_authenticated %}
+                            <a id="up_{{ bookmark.id }}" href="#" onclick="vote({{ bookmark.id }}, '{% if vote and vote.is_downvote %}clear{% else %}up{% endif %}'); return false;"><img src="{{ MEDIA_URL }}bookmarks/img/up_{% if vote and vote.is_upvote %}mod{% else %}grey{% endif %}.png"/></a><br />
+                        {% endif %}
+                        <span id="bookmark_{{ bookmark.id }}_score">
+                            {{ score.score|default:0 }} point{{ score.score|default:0|pluralize }}
+                        </span><br />
+                        {% if user.is_authenticated %}
+                            <a id="down_{{ bookmark.id }}" href="#" onclick="vote({{ bookmark.id }}, '{% if vote and vote.is_upvote %}clear{% else %}down{% endif %}'); return false;"><img id="img_{{ bookmark.id }}_down" src="{{ MEDIA_URL }}bookmarks/img/down_{% if vote and vote.is_downvote %}mod{% else %}grey{% endif %}.png"/></a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col_bulk">
+                        <h2><a href="{{ bookmark.url }}">{{ bookmark.description }}</a></h2>
+                        <div class="url">{% if bookmark.get_favicon_url %}<img src="{{ bookmark.get_favicon_url }}" width="16" height="16" /> {% endif %}{{ bookmark.url }}</div>
+                        <div class="body">{{ bookmark.note|linebreaks }}</div>
+                        <div class="save">
+                            {% blocktrans count bookmark.saved_instances.count as count %}
+                                Saved once
+                            {% plural %}
+                                Saved {{ count }} times
+                            {% endblocktrans %}
+                            {% if bookmark|in_list:user_bookmarks %}
+                                {% blocktrans %}(including you){% endblocktrans %}
+                            {% else %}
+                                (<a href="{% url add_bookmark %}?url={{ bookmark.url }};description={{ bookmark.description }}">{% blocktrans %}save{% endblocktrans %}</a>)
+                            {% endif %}
+                        </div>                    
+                            <div class="tags"><p>{% show_tag_counts bookmark.all_tags_with_counts %}</p></div>
+                            {% include "bookmarks/shareit.html"%}
+                </div>
+            </div>
+    <div class="clear_both"></div>

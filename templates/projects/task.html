@@ -1,0 +1,117 @@
+{% extends "projects/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load project_tags %}
+{% load comments_tag %}
+
+{% block head_title %}{{ task.summary }}{% endblock %}
+
+{% block body %}
+<div class="left_panel">
+    <p><a href="{% url project_tasks task.project.slug %}">&larr; {% trans "Back to Task List for Project " %} {{ task.project }}</a></p>
+    
+    {% show_task task %}
+    
+    {% ifequal request.user task.assignee %}
+    <div class="form-toggle">
+        <p><span id="edit-profile-toggle">
+        {#<img src="{{ MEDIA_URL }}pinax/images/silk/icons/pencil.png" border="0" title="{% trans "Edit Profile" %}" />#}
+        {% trans "Edit Task" %}</span></p>
+        <form class="uniForm" id="edit-profile" method="POST" action="">
+            <fieldset class="inlineLabels">
+                {{ status_form|as_uni_form }}
+                <div class="form_block">
+                    <input type="hidden" name="action" value="update_status" />
+                    <input type="submit" value="{% trans "Update Status" %}"/>
+                </div>
+            </fieldset>
+        </form>
+    {% else %}
+        {#<div><b>Status</b>: {{ task.status }}</div>#}
+    {% endifequal %}
+    
+    {% if is_member %}
+        <form class="uniForm" id="edit-profile" method="POST" action="">
+            <fieldset class="inlineLabels">
+                {{ assign_form|as_uni_form }}
+                <div class="form_block">
+                    <input type="hidden" name="action" value="assign" />
+                    {% if task.assignee %}
+                        <input type="submit" value="{% trans 'Reassign' %}" />
+                    {% else %}
+                        <input type="submit" value="{% trans 'Assign' %}" />
+                    {% endif %}
+                </div>
+            </fieldset>
+        </form>
+    {% endif %}
+    
+    {% ifequal task.get_state_display 'open' %}
+        {% ifequal request.user task.assignee %}
+            <form class="uniForm" id="edit-profile" action="" method="POST">
+            <fieldset class="inlineLabels">
+                <div class="form_block">
+                <input type="hidden" name="action" value="mark_resolved" />
+                <input type="submit" value="{% trans 'Mark Resolved' %}" />
+                </div>
+            </fieldset>
+            </form>
+        {% endifequal %}
+    {% else %}
+        {% ifequal task.get_state_display 'resolved' %}
+            {% ifequal request.user task.creator %}
+                <form class="uniForm" id="edit-profile" action="" method="POST">
+            <fieldset class="inlineLabels">
+                <div class="form_block">
+                    <input type="hidden" name="action" value="mark_closed" />
+                    <input type="submit" value="{% trans 'Mark Closed' %}" />
+                </div>
+            </fieldset>
+                </form>
+            {% endifequal %}
+            {% if is_member %}
+                <form class="uniForm" id="edit-profile" action="" method="POST">
+            <fieldset class="inlineLabels">
+                <div class="form_block">
+                    <input type="hidden" name="action" value="reopen" />
+                    <input type="submit" value="{% trans 'Reopen' %}" />
+                </div>
+            </fieldset>
+                </form>
+            {% endif %}
+        {% else %}
+            {% if is_member %}
+                <form class="uniForm" id="edit-profile" action="" method="POST">
+            <fieldset class="inlineLabels">
+                <div class="form_block">
+                    <input type="hidden" name="action" value="reopen" />
+                    <input type="submit" value="{% trans 'Reopen' %}" />
+                </div>
+            </fieldset>
+                </form>
+            {% endif %}
+        {% endifequal %}
+    {% endifequal %}
+    
+    </div>
+    
+    <h2>Discussion</h2>
+    {% comments task %}
+</div>
+{% endblock %}
+{% block extra_body %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+                $('#edit-profile-toggle').click(function() {
+                    $('#edit-profile').toggle();
+                    $('#edit-profile').autoscroll();
+                    return false;
+                });
+                if ($('#edit-profile ul.errorlist').length) {
+                    $('#edit-profile').show();
+                    $('#edit-profile ul.errorlist').autoscroll();
+                }
+        });
+    </script>
+{% endblock %}

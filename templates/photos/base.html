@@ -1,0 +1,20 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block rtab_id %}id="photos_tab"{% endblock %}
+
+{% block subnav %}
+    {% if user.is_authenticated %}
+        <div id="subnav_heading">
+            {% trans "Photos" %}
+        </div>
+        <ul>
+            <li><a href="{% url photos %} ">{% trans "Latest Photos" %}</a></li>
+            <li><a href="{% url photos_yours %}">{% trans "Your Photos" %}</a></li>
+            <li><a href="{% url friends_photos %}">{% trans "Friends' Photos" %}</a></li>
+            <li><a href="{% url photo_upload %}">{% trans "Upload a Photo" %}</a></li>
+        </ul>
+    {% else %}
+    {% endif %}
+{% endblock %}

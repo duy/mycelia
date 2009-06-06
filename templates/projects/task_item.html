@@ -1,0 +1,51 @@
+{% load i18n %}
+{% load extra_tagging_tags %}
+{% load avatar_tags %}
+{% load shorttimesince_tag %}
+{% load threadedcommentstags %}
+
+<div class="items">
+        
+    <div class="col_data">
+        <div class="details">
+        {% if task.assignee %}
+            <div class="avatar">{% avatar task.assignee 40 %}</div>
+            <div class="author">
+                <b>{% trans "Assignee" %}</b>: <a href="{{ task.assignee.get_profile.get_absolute_url }}">{{ task.assignee }}</a>
+            </div>
+                    
+        {% else %}
+            <div class="author">
+                <span class="warning">{% trans "Unassigned" %}</span>
+            </div>
+        {% endif %}
+            <div class="author"><b>{% trans "Creator" %}</b>: <a href="{{ task.creator.get_profile.get_absolute_url }}">{{ task.creator }}</a></div>
+            <div class="author"><b>{% trans "State" %}</b>: {{ task.get_state_display }}</div>
+            <div class="date"><b>{% trans "Created" %}</b>: {{ task.created|date }}</div>
+            <div class="date"><b>{% trans "Modified" %}</b>: {{ task.modified|shorttimesince }} ago</div>
+        </div>
+    </div>
+    <div class="col_bulk">
+        <h2 class="task_{{ task.get_state_display }}"><a href="{{ task.get_absolute_url }}">{{ task.summary }}</a></h2>
+        <div class="body">
+            {{ task.detail|urlize|linebreaks }}
+        </div>
+        <div class="details save">
+            <b>{% trans "Status" %}</b>: 
+            {% if task.status %}
+                {{ task.status }}
+            {% else %}
+                {% trans "none" %}
+            {% endif %}
+        </div>
+            {% get_comment_count for task as comment_count %}
+            {#{% if comment_count %}#}
+                <div class="details comment_count">
+                    <img class="noborder" src="/site_media/pinax/images/silk/icons/comment.png" />
+                    <a href="{{ task.get_absolute_url }}">{{ comment_count }} {% trans "Comment" %}{{ comment_count|pluralize }}</a>
+                </div>
+            {#{% endif %}#}
+        <div class="tags">{% show_tags_for task %}</div>
+    </div>
+</div>
+    <div class="clear_both"></div>

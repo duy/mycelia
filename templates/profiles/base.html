@@ -1,0 +1,18 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block rtab_id %}id="profile_tab"{% endblock %}
+
+{% block subnav %}
+    {% if user.is_authenticated %}
+        <div id="subnav_heading">
+            {% trans "Profile" %}
+        </div>
+        <ul>
+            <li><a href="{% url profile_detail user.username %} ">{% trans "Your Profile" %}</a></li>
+            <li><a href="{% url profile_list %} ">{% trans "All Profiles" %}</a></li>
+        </ul>
+    {% else %}
+    {% endif %}
+{% endblock %}
